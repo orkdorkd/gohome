@@ -14,75 +14,65 @@
 <body class="bg-slate-950 text-slate-200 min-h-screen">
 <div class="max-w-md mx-auto p-6">
 
-  <div class="flex justify-between items-center mb-8">
-    <div class="text-3xl font-semibold tracking-tight title-font">Home Now</div>
-  </div>
+  <div class="text-3xl font-semibold tracking-tight title-font mb-8">Home Now</div>
 
-  <!-- Two buttons -->
+  <!-- Top buttons -->
   <div class="grid grid-cols-2 gap-3 mb-8">
-    <button onclick="getCurrentLocation()" 
-            class="py-4 bg-emerald-600 hover:bg-emerald-500 rounded-3xl font-medium text-lg active:scale-95 transition">
-      📍 Get Current Location
-    </button>
-    <button onclick="inputManualLocation()" 
-            class="py-4 bg-slate-700 hover:bg-slate-600 rounded-3xl font-medium text-lg active:scale-95 transition">
-      ✍️ Input Location
-    </button>
+    <button onclick="findMe()" class="py-3 bg-slate-700 hover:bg-slate-600 rounded-3xl text-sm font-medium">📍 Find Me</button>
+    <button onclick="fromHere()" class="py-3 bg-slate-700 hover:bg-slate-600 rounded-3xl text-sm font-medium">✍️ From Here</button>
   </div>
 
   <div id="location-status" class="text-sm text-slate-400 mb-6"></div>
   <div id="weather" class="text-xs bg-slate-900 px-4 py-2 rounded-2xl mb-6 text-center"></div>
 
-  <div class="text-center mb-8">
-    <div class="text-sm text-slate-400">To Grand Waterfront</div>
+  <div class="text-center mb-10">
+    <div id="destination-label" class="text-sm text-emerald-400 font-medium">To Grand Waterfront</div>
     <div id="best-eta" class="text-6xl font-mono font-bold text-emerald-400">—</div>
     <div class="text-sm text-slate-400">min</div>
   </div>
 
-  <div id="routes-list" class="space-y-4"></div>
+  <div id="routes-list" class="space-y-4 mb-24"></div>
+
+  <!-- Bottom toggles - not stretched -->
+  <div class="fixed bottom-6 left-6 right-6 max-w-md mx-auto bg-slate-900 rounded-3xl p-2 flex gap-2">
+    <button onclick="setDestination('Home')" class="flex-1 py-3 bg-emerald-600 rounded-3xl text-sm font-medium">🏠 Home</button>
+    <button onclick="setDestination('Work')" class="flex-1 py-3 bg-slate-700 rounded-3xl text-sm font-medium">💼 Work</button>
+    <button onclick="setDestination('Gym')" class="flex-1 py-3 bg-slate-700 rounded-3xl text-sm font-medium">🏋️ Gym</button>
+  </div>
 
 </div>
 
 <script>
-let currentMockLocation = "Strength Culture, Central";
+let currentDestination = "Home";
 
-async function getCurrentLocation() {
+function setDestination(dest) {
+  currentDestination = dest;
+  document.getElementById('destination-label').textContent = `To ${dest === 'Home' ? 'Grand Waterfront' : dest}`;
+  fetchRoutes();
+}
+
+function findMe() {
   const status = document.getElementById('location-status');
-  status.textContent = "Getting GPS location...";
-
-  try {
-    const pos = await new Promise((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 });
-    });
-    currentMockLocation = "Your current location";
-    status.textContent = `GPS acquired • ${new Date().toLocaleTimeString('en-HK', {hour:'2-digit', minute:'2-digit'})}`;
+  status.textContent = "Getting location...";
+  setTimeout(() => {
+    status.textContent = "Location acquired";
     fetchRoutes();
-  } catch(e) {
-    status.textContent = "GPS unavailable. Using last location.";
+  }, 600);
+}
+
+function fromHere() {
+  const loc = prompt("Enter current location:", "Strength Culture, Central");
+  if (loc) {
+    document.getElementById('location-status').textContent = `From: ${loc}`;
     fetchRoutes();
   }
 }
 
-function inputManualLocation() {
-  const location = prompt("Enter your current location (e.g. IFC Mall, Airside, 1 Hok Cheung Street):", currentMockLocation);
-  if (location) {
-    currentMockLocation = location;
-    document.getElementById('location-status').textContent = `Manual: ${location}`;
-    fetchRoutes();
-  }
-}
-
-async function fetchRoutes() {
-  const status = document.getElementById('location-status');
-  if (!status.textContent.includes("GPS") && !status.textContent.includes("Manual")) {
-    status.textContent = `Near ${currentMockLocation}`;
-  }
-
-  // Realistic mock from Central area
+function fetchRoutes() {
   const mockRoutes = [
-    { type: "Bus", name: "11X / local", eta: 32, cost: "9.5", steps: "Walk 6 min to stop → Bus 22 min → Walk 7 min home" },
-    { type: "MTR", name: "Tsuen Wan + Kwun Tong", eta: 37, cost: "14", steps: "Walk 8 min to Central → MTR 22 min → Walk 7 min" },
-    { type: "Taxi", name: "Direct", eta: 22, cost: "\~110", steps: "Taxi \~22 min" }
+    { type: "Bus", name: "11X / local", eta: 32, cost: "9.5", steps: "Bus option" },
+    { type: "MTR", name: "Short ride", eta: 37, cost: "14", steps: "MTR option" },
+    { type: "Taxi", name: "Direct", eta: 22, cost: "\~110", steps: "Taxi option" }
   ];
 
   renderRoutes(mockRoutes);
@@ -117,7 +107,7 @@ function renderRoutes(routes) {
 }
 
 function showSteps(steps) {
-  alert("Full Steps to Grand Waterfront:\n\n" + steps);
+  alert("Full Steps:\n\n" + steps);
 }
 
 fetchRoutes();
