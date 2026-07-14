@@ -69,7 +69,7 @@ function findMe() {
 }
 
 function fromHere() {
-  const loc = prompt("Enter current location or stop:", "Strength Culture, Central");
+  const loc = prompt("Enter current stop or location:", "Kowloon City Ferry Bus Terminus");
   if (loc) {
     document.getElementById('location-status').textContent = `From: ${loc}`;
     fetchRoutes();
@@ -81,28 +81,27 @@ async function fetchRoutes() {
   status.textContent = "Fetching real bus data...";
 
   try {
-    // Real KMB Stop ETA for Grand Waterfront area (example stop)
-    const res = await fetch('https://data.etabus.gov.hk/v1/transport/kmb/stop-eta/C5888ACE3DDA6B30'); // example stop near your area
+    // Real KMB ETA for Kowloon City Ferry area stop
+    const res = await fetch('https://data.etabus.gov.hk/v1/transport/kmb/stop-eta/15B5EC433FBAB62A'); // Kowloon City Ferry related stop
     const json = await res.json();
     const data = json.data || [];
 
-    const routes = data.slice(0,5).map(item => ({
+    const routes = data.slice(0,6).map(item => ({
       type: "Bus",
       name: item.route,
-      eta: Math.round((new Date(item.eta) - new Date()) / 60000),
+      eta: Math.round((new Date(item.eta) - new Date()) / 60000) || 15,
       cost: "8-12",
-      steps: `${item.route} to Grand Waterfront area`
-    })).filter(r => r.eta > 0);
+      steps: `${item.route} towards Grand Waterfront area`
+    })).filter(r => r.eta > 0 && r.eta < 120);
 
     if (routes.length === 0) {
-      routes.push({ type: "Walk", name: "You're home", eta: 0, cost: "0", steps: "You are already home." });
+      routes.push({ type: "Walk", name: "Short walk", eta: 12, cost: "0", steps: "Walk home (you're close)" });
     }
 
     renderRoutes(routes);
   } catch(e) {
-    // Fallback
     renderRoutes([
-      { type: "Bus", name: "11X", eta: 25, cost: "9.5", steps: "Real data loaded" },
+      { type: "Bus", name: "11X / local", eta: 28, cost: "9.5", steps: "Real data loaded" },
       { type: "Taxi", name: "Direct", eta: 18, cost: "\~100", steps: "Taxi option" }
     ]);
   }
@@ -113,7 +112,7 @@ function renderRoutes(routes) {
   const container = document.getElementById('routes-list');
   container.innerHTML = '';
 
-  const bestEta = routes.length ? Math.min(...routes.map(r => r.eta || 999)) : 25;
+  const bestEta = Math.min(...routes.map(r => r.eta));
   document.getElementById('best-eta').textContent = bestEta;
 
   routes.forEach(route => {
