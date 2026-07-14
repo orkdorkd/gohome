@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Go Home</title>
+<title>Home Now</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="manifest" href="manifest.json">
 <style>
@@ -16,7 +16,18 @@
 
   <div class="flex justify-between items-center mb-8">
     <div class="text-3xl font-semibold tracking-tight title-font">Home Now</div>
-    <button onclick="fetchRoutes()" class="px-5 py-2 bg-slate-800 rounded-2xl text-sm">Refresh</button>
+  </div>
+
+  <!-- Two buttons -->
+  <div class="grid grid-cols-2 gap-3 mb-8">
+    <button onclick="getCurrentLocation()" 
+            class="py-4 bg-emerald-600 hover:bg-emerald-500 rounded-3xl font-medium text-lg active:scale-95 transition">
+      📍 Get Current Location
+    </button>
+    <button onclick="inputManualLocation()" 
+            class="py-4 bg-slate-700 hover:bg-slate-600 rounded-3xl font-medium text-lg active:scale-95 transition">
+      ✍️ Input Location
+    </button>
   </div>
 
   <div id="location-status" class="text-sm text-slate-400 mb-6"></div>
@@ -33,65 +44,73 @@
 </div>
 
 <script>
-const HOME = { lat: 22.3105, lng: 114.1908 };
+let currentMockLocation = "Strength Culture, Central";
 
-async function fetchRoutes() {
+async function getCurrentLocation() {
   const status = document.getElementById('location-status');
-  status.textContent = "Getting location...";
+  status.textContent = "Getting GPS location...";
 
   try {
     const pos = await new Promise((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 8000 });
+      navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 });
     });
-
-    const currentLat = pos.coords.latitude;
-    const currentLng = pos.coords.longitude;
-    const distance = Math.random() * 8; // mock distance in km
-
-    status.textContent = `Detected near your area • ${new Date().toLocaleTimeString('en-HK', {hour:'2-digit', minute:'2-digit'})}`;
-
-    const mockRoutes = [
-      { type: "Walk", name: "Direct", eta: Math.round(distance * 12), cost: "0", steps: "Walk home directly (under 15 min total)" },
-      { type: "Bus", name: "11X or local", eta: 25, cost: "8.6", steps: "Walk 7 min to stop → Bus 18 min → Walk 5 min" },
-      { type: "MTR", name: "Short ride", eta: 28, cost: "12", steps: "Walk 10 min to station → MTR 13 min → Walk 5 min" },
-      { type: "Taxi", name: "Direct", eta: 15, cost: "\~80", steps: "Taxi \~15 min" }
-    ];
-
-    renderRoutes(mockRoutes);
-    document.getElementById('weather').textContent = "Clear • 31°C";
-
+    currentMockLocation = "Your current location";
+    status.textContent = `GPS acquired • ${new Date().toLocaleTimeString('en-HK', {hour:'2-digit', minute:'2-digit'})}`;
+    fetchRoutes();
   } catch(e) {
-    status.textContent = "Location unavailable. Showing general options.";
-    // Fallback
-    renderRoutes([
-      { type: "Bus", name: "11X", eta: 27, cost: "8.6", steps: "Walk 8 min → Bus 19 min → Walk 6 min" },
-      { type: "MTR", name: "Kwun Tong Line", eta: 32, cost: "12", steps: "Walk 12 min → MTR 15 min" }
-    ]);
+    status.textContent = "GPS unavailable. Using last location.";
+    fetchRoutes();
   }
+}
+
+function inputManualLocation() {
+  const location = prompt("Enter your current location (e.g. IFC Mall, Airside, 1 Hok Cheung Street):", currentMockLocation);
+  if (location) {
+    currentMockLocation = location;
+    document.getElementById('location-status').textContent = `Manual: ${location}`;
+    fetchRoutes();
+  }
+}
+
+async function fetchRoutes() {
+  const status = document.getElementById('location-status');
+  if (!status.textContent.includes("GPS") && !status.textContent.includes("Manual")) {
+    status.textContent = `Near ${currentMockLocation}`;
+  }
+
+  // Realistic mock from Central area
+  const mockRoutes = [
+    { type: "Bus", name: "11X / local", eta: 32, cost: "9.5", steps: "Walk 6 min to stop → Bus 22 min → Walk 7 min home" },
+    { type: "MTR", name: "Tsuen Wan + Kwun Tong", eta: 37, cost: "14", steps: "Walk 8 min to Central → MTR 22 min → Walk 7 min" },
+    { type: "Taxi", name: "Direct", eta: 22, cost: "\~110", steps: "Taxi \~22 min" }
+  ];
+
+  renderRoutes(mockRoutes);
+  document.getElementById('weather').textContent = "Clear • 31°C";
 }
 
 function renderRoutes(routes) {
   const container = document.getElementById('routes-list');
   container.innerHTML = '';
 
-  const bestEta = routes.length ? Math.min(...routes.map(r => r.eta)) : 25;
+  const bestEta = Math.min(...routes.map(r => r.eta));
   document.getElementById('best-eta').textContent = bestEta;
 
   routes.forEach(route => {
     const card = document.createElement('div');
     card.className = "bg-slate-900 rounded-3xl p-5 cursor-pointer active:scale-95 transition";
     card.innerHTML = `
-      <div class="flex justify-between">
+      <div class="flex justify-between items-start">
         <div>
           <div class="text-xl font-semibold">${route.type}</div>
           <div class="text-slate-400">${route.name}</div>
         </div>
         <div class="text-right">
           <div class="text-4xl font-mono font-bold text-emerald-400">${route.eta}</div>
-          <div class="text-xs">min • $${route.cost}</div>
+          <div class="text-xs text-slate-400">min • $${route.cost}</div>
         </div>
       </div>
-      <button onclick="showSteps('${route.steps}')" class="mt-4 w-full py-3 bg-slate-800 hover:bg-slate-700 rounded-2xl text-sm">Show Full Steps</button>
+      <button onclick="showSteps('${route.steps}')" class="mt-4 w-full py-3 bg-slate-800 hover:bg-slate-700 rounded-2xl text-sm font-medium">Show Full Steps</button>
     `;
     container.appendChild(card);
   });
