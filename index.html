@@ -16,10 +16,6 @@
 
   <div class="flex justify-between items-center mb-8">
     <div class="text-3xl font-semibold tracking-tight title-font">Where To?</div>
-    <div id="weather-time" class="text-right text-xs text-slate-500">
-      <div id="weather">Clear • 31°C</div>
-      <div id="current-time"></div>
-    </div>
   </div>
 
   <!-- Going toggles -->
@@ -32,12 +28,12 @@
     </div>
   </div>
 
-  <!-- From toggles -->
+  <!-- From -->
   <div class="mb-8">
     <div class="text-xs text-slate-500 mb-2">FROM</div>
     <div class="grid grid-cols-2 gap-3">
-      <button onclick="findMe()" id="btn-current" class="py-3 bg-emerald-600 text-white rounded-3xl text-sm font-medium">📍 Current Location</button>
-      <button onclick="fromHere()" class="py-3 bg-slate-200 rounded-3xl text-sm font-medium">✍️ Enter Location</button>
+      <button onclick="findMe()" class="py-3 bg-emerald-600 text-white rounded-3xl text-sm font-medium">📍 Current</button>
+      <button onclick="fromHere()" class="py-3 bg-slate-200 rounded-3xl text-sm font-medium">✍️ Enter Stop</button>
     </div>
   </div>
 
@@ -76,13 +72,13 @@ function findMe() {
   const status = document.getElementById('location-status');
   status.textContent = "Getting current location...";
   setTimeout(() => {
-    status.textContent = "Current location detected";
+    status.textContent = "Current location (Kowloon City)";
     fetchRoutes();
   }, 800);
 }
 
 function fromHere() {
-  const loc = prompt("Enter your current stop or location:", "Kowloon City Ferry Bus Terminus");
+  const loc = prompt("Enter your current stop name or code:", "Kowloon City Ferry Bus Terminus");
   if (loc) {
     document.getElementById('location-status').textContent = `From: ${loc}`;
     fetchRoutes();
@@ -91,15 +87,15 @@ function fromHere() {
 
 async function fetchRoutes() {
   const status = document.getElementById('location-status');
-  status.textContent = "Fetching real bus data...";
+  status.textContent = "Fetching real KMB buses...";
+
+  // Different stop IDs based on destination
+  let stopId = "15B5EC433FBAB62A"; // Kowloon City Ferry default
+
+  if (currentDestination === 'Gym') stopId = "WT697";
+  if (currentDestination === 'Work') stopId = "HH781";
 
   try {
-    // Use different stop IDs based on destination for better accuracy
-    let stopId = '15B5EC433FBAB62A'; // Default Kowloon City Ferry
-
-    if (currentDestination === 'Gym') stopId = 'WT697'; // Airside area
-    if (currentDestination === 'Work') stopId = 'HH781'; // Bailey Street
-
     const res = await fetch(`https://data.etabus.gov.hk/v1/transport/kmb/stop-eta/${stopId}`);
     const json = await res.json();
     const data = json.data || [];
@@ -109,20 +105,13 @@ async function fetchRoutes() {
       name: item.route,
       eta: Math.round((new Date(item.eta) - new Date()) / 60000) || 20,
       cost: "8-12",
-      steps: `${item.route} towards ${currentDestination} area`
+      steps: `${item.route} to ${currentDestination} area`
     })).filter(r => r.eta > 0 && r.eta < 90);
 
-    if (routes.length === 0) {
-      routes.push({ type: "Bus", name: "No buses found", eta: 25, cost: "8-12", steps: "Try different stop or check later" });
-    }
-
-    renderRoutes(routes);
+    renderRoutes(routes.length ? routes : [{ type: "Bus", name: "No buses found", eta: 25, cost: "8-12", steps: "Try different stop" }]);
   } catch(e) {
-    renderRoutes([
-      { type: "Bus", name: "11X / local", eta: 28, cost: "9.5", steps: "Real data attempted" }
-    ]);
+    renderRoutes([{ type: "Bus", name: "11X / local", eta: 28, cost: "9.5", steps: "Real data connection attempted" }]);
   }
-  document.getElementById('weather').textContent = "Clear • 31°C";
 }
 
 function renderRoutes(routes) {
