@@ -6,13 +6,14 @@
     <title>CatchBus</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    
+    <!-- PWA Setup -->
     <meta name="theme-color" content="#84cc16">
-    <!-- PWA Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="CatchBus">
-    <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiQ2F0Y2hCdXMiLCJzaG9ydF9uYW1lIjoiQ2F0Y2hCdXMiLCJkZXNjcmlwdGlvbiI6IkxpdmUgS01CIGJ1cyBFVEEgZm9yIEhvbmcgS29uZyIsInN0YXJ0X3VybCI6Ii4iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjZjRmNGY1IiwidGhlbWVfY29sb3IiOiIjODRjYzE2Iiwib3JpZW50YXRpb24iOiJwb3J0cmFpdCIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsJTNDc3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgdmlld0JveD0nMCAwIDIwMCAyMDAnJTNFJTNDcmVjdCB3aWR0aD0nMjAwJyBoZWlnaHQ9JzIwMCcgcng9JzQwJyBmaWxsPScjODRjYzE2Jy8lM0UlM0N0ZXh0IHg9JzEwMCcgeT0nMTI1JyBmb250LXNpemU9JzExMCcgdGV4dC1hbmNob3I9J21pZGRsZScgZmlsbD0nd2hpdGUnJTNF4pi6JTNDL3RleHQlM0UlM0Mvc3ZnJTNFIiwic2l6ZXMiOiIxOTJ4MTkyIiwidHlwZSI6ImltYWdlL3N2Zyt4bWwifV19">
-    
+    <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiQ2F0Y2hCdXMiLCJzaG9ydF9uYW1lIjoiQ2F0Y2hCdXMiLCJkZXNjcmlwdGlvbiI6IkxpdmUgS01CIEJ1cyBldGEiLCJzdGFydF91cmwiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y0ZjRmNSIsInRoZW1lX2NvbG9yIjoiIzg0Y2MxNiIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsJTNDc3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgdmlld0JveD0nMCAwIDIwMCAyMDAnJTNFJTNDcmVjdCB3aWR0aD0nMjAwJyBoZWlnaHQ9JzIwMCcgcng9JzM4JyBmaWxsPScjODRjYzE2Jy8lM0UlM0N0ZXh0IHg9JzEwMCcgeT0nMTMwJyBmb250LXNpemU9JzEwMCcgdGV4dC1hbmNob3I9J21pZGRsZScgZmlsbD0nd2hpdGUnJTNF4pi6JTNDL3RleHQlM0UlM0Mvc3ZnJTNFIiwic2l6ZXMiOiIxOTJ4MTkyIiwidHlwZSI6ImltYWdlL3N2Zyt4bWwifV19">
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         body { font-family: 'Inter', system-ui, sans-serif; }
@@ -55,9 +56,7 @@
             tailwind.config = { theme: { extend: { colors: { lime: { 500: '#84cc16' } } } } };
         }
 
-        // Cleaned config (no duplicate 15)
         const tripsConfig = [
-            // From Home - Gym on top
             { from: "Home", to: "Gym", emoji: "🏋️", route: "11B", stopId: "F088E9BC1B13B13D", stopName: "Kowloon City Ferry Bus Terminus KC949" },
             { from: "Home", to: "PLK LMC", emoji: "👧", route: "75X", stopId: "C72D7C053FC3AEBB", stopName: "Kowloon City Ferry Bus Terminus KC949" },
             { from: "Home", to: "PLK LMC", emoji: "👧", route: "85", stopId: "1D0E096C4E9766C6", stopName: "Kowloon City Ferry Bus Terminus KC949" },
@@ -65,11 +64,9 @@
             { from: "Home", to: "PLK TAY", emoji: "👦", route: "85X", stopId: "5396072459507B7F", stopName: "Grand Waterfront KC760" },
             { from: "Home", to: "PLK TAY", emoji: "👦", route: "5D", stopId: "5396072459507B7F", stopName: "Grand Waterfront KC760" },
             
-            // From Gym
             { from: "Gym", to: "Home/Work", emoji: "🏠", route: "15", stopId: "C80FB453C9F53569", stopName: "The Latitude WT697" },
             { from: "Gym", to: "Home/Work", emoji: "🏠", route: "85X", stopId: "C80FB453C9F53569", stopName: "The Latitude WT697" },
             
-            // From Work
             { from: "Work", to: "Gym", emoji: "🏋️", route: "11X", stopId: "C5888ACE3DDA6B30", stopName: "Hok Yuen Street East HH352" },
             { from: "Work", to: "Home", emoji: "🏠", route: "115", stopId: "C5888ACE3DDA6B30", stopName: "Hok Yuen Street East HH352" },
             { from: "Work", to: "Home", emoji: "🏠", route: "5D", stopId: "C5888ACE3DDA6B30", stopName: "Hok Yuen Street East HH352" }
@@ -80,8 +77,7 @@
 
         function calculateMins(etaStr) {
             if (!etaStr) return Infinity;
-            const etaDate = new Date(etaStr);
-            const diff = (etaDate - new Date()) / 60000;
+            const diff = (new Date(etaStr) - new Date()) / 60000;
             return diff > 0 ? Math.round(diff) : 0;
         }
 
@@ -95,15 +91,13 @@
         async function fetchStopEta(stopId) {
             try {
                 const res = await fetch(`https://data.etabus.gov.hk/v1/transport/kmb/stop-eta/${stopId}`);
-                if (!res.ok) throw new Error("API error");
                 const data = await res.json();
                 etaCache[stopId] = data.data || [];
             } catch (e) {}
         }
 
         function getTripEtas(trip) {
-            const rawEtas = etaCache[trip.stopId] || [];
-            return rawEtas
+            return (etaCache[trip.stopId] || [])
                 .filter(e => e.route && e.route.toUpperCase() === trip.route.toUpperCase())
                 .sort((a, b) => (a.eta_seq || 999) - (b.eta_seq || 999))
                 .slice(0, 3);
@@ -114,7 +108,7 @@
             const firstMins = etas.length ? calculateMins(etas[0].eta) : Infinity;
             const urgency = getUrgency(firstMins);
 
-            let html = `
+            return `
                 <div class="bg-white rounded-3xl shadow-sm border border-zinc-100 overflow-hidden card-hover">
                     <div class="px-5 pt-5 pb-4">
                         <div class="flex items-start justify-between">
@@ -128,7 +122,6 @@
                                 <div class="text-xs font-medium text-zinc-500 -mt-1">min to catch</div>
                             </div>
                         </div>
-                        
                         <div class="mt-4 flex items-center gap-x-2">
                             <span class="text-2xl">${trip.emoji}</span>
                             <div>
@@ -137,7 +130,6 @@
                             </div>
                         </div>
                     </div>
-                    
                     <div class="border-t bg-zinc-50 px-5 py-3 text-sm">
                         ${etas.length ? etas.map((eta, i) => {
                             const mins = calculateMins(eta.eta);
@@ -152,14 +144,12 @@
                             `;
                         }).join('') : `
                             <div class="text-center py-3 text-zinc-400 text-sm">
-                                No upcoming ETAs right now for this route<br>
-                                <span class="text-xs">(KMB live data)</span>
+                                No upcoming ETAs<br><span class="text-xs">(KMB live data)</span>
                             </div>
                         `}
                     </div>
                 </div>
             `;
-            return html;
         }
 
         function getGroupedTrips(from) {
@@ -175,21 +165,16 @@
         async function render() {
             const main = document.getElementById("main-content");
             main.innerHTML = `<div class="flex justify-center py-12"><div class="animate-spin w-8 h-8 border-4 border-lime-500 border-t-transparent rounded-full"></div></div>`;
-            
-            const relevantStops = new Set();
-            tripsConfig.filter(t => t.from === currentFrom).forEach(t => relevantStops.add(t.stopId));
-            
-            await Promise.all(Array.from(relevantStops).map(id => fetchStopEta(id)));
-            
+
+            const relevantStops = new Set(tripsConfig.filter(t => t.from === currentFrom).map(t => t.stopId));
+            await Promise.all([...relevantStops].map(fetchStopEta));
+
             const groups = getGroupedTrips(currentFrom);
-            
             let html = `<div class="space-y-8">`;
-            
+
             let destOrder = Object.keys(groups);
-            if (currentFrom === "Home") {
-                destOrder = ["Gym", "PLK LMC", "PLK TAY"];
-            }
-            
+            if (currentFrom === "Home") destOrder = ["Gym", "PLK LMC", "PLK TAY"];
+
             destOrder.forEach(dest => {
                 if (!groups[dest]) return;
                 const group = groups[dest];
@@ -202,27 +187,20 @@
                             </div>
                             <span class="text-4xl ml-auto">${group.emoji}</span>
                         </div>
-                        
                         <div class="space-y-4">
                             ${group.trips.map(trip => createRouteCard(trip)).join('')}
                         </div>
                     </div>
                 `;
             });
-            
+
             html += `</div>`;
             main.innerHTML = html;
-            
-            // Active tab
+
+            // Update active tab
             ['Gym','Work','Home'].forEach(f => {
                 const tab = document.getElementById(`tab-${f}`);
-                if (tab) {
-                    if (f === currentFrom) {
-                        tab.classList.add('lime-gradient', 'text-white', 'shadow-md');
-                    } else {
-                        tab.classList.remove('lime-gradient', 'text-white', 'shadow-md');
-                    }
-                }
+                if (tab) tab.classList.toggle('lime-gradient text-white shadow-md', f === currentFrom);
             });
         }
 
@@ -235,20 +213,15 @@
             await render();
         }
 
-        async function init() {
+        function init() {
             initTailwind();
-            
-            const gymTab = document.getElementById("tab-Gym");
-            if (gymTab) gymTab.classList.add('lime-gradient', 'text-white', 'shadow-md');
-            
-            await render();
-            
-            // Auto-refresh every 45 seconds
-            setInterval(() => {
-                render();
-            }, 45000);
+            document.getElementById("tab-Gym").classList.add('lime-gradient', 'text-white', 'shadow-md');
+            render();
 
-            console.log('%c✅ CatchBus PWA ready with auto-refresh (45s)', 'color:#84cc16; font-weight:600');
+            // Auto refresh every 45 seconds
+            setInterval(render, 45000);
+
+            console.log('%c✅ CatchBus ready • Auto-refresh 45s • Nice icon added', 'color:#84cc16; font-weight:600');
         }
 
         window.onload = init;
