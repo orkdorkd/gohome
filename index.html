@@ -1,151 +1,257 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Where To?</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="manifest" href="manifest.json">
-<style>
-  body { font-family: 'Inter', system_ui, sans-serif; background: #f8fafc; color: #1e2937; }
-  .title-font { font-family: 'Space Grotesk', sans-serif; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CatchBus</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <meta name="theme-color" content="#84cc16">
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="CatchBus">
+    <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiQ2F0Y2hCdXMiLCJzaG9ydF9uYW1lIjoiQ2F0Y2hCdXMiLCJkZXNjcmlwdGlvbiI6IkxpdmUgS01CIGJ1cyBFVEEgZm9yIEhvbmcgS29uZyIsInN0YXJ0X3VybCI6Ii4iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjZjRmNGY1IiwidGhlbWVfY29sb3IiOiIjODRjYzE2Iiwib3JpZW50YXRpb24iOiJwb3J0cmFpdCIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsJTNDc3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgdmlld0JveD0nMCAwIDIwMCAyMDAnJTNFJTNDcmVjdCB3aWR0aD0nMjAwJyBoZWlnaHQ9JzIwMCcgcng9JzQwJyBmaWxsPScjODRjYzE2Jy8lM0UlM0N0ZXh0IHg9JzEwMCcgeT0nMTI1JyBmb250LXNpemU9JzExMCcgdGV4dC1hbmNob3I9J21pZGRsZScgZmlsbD0nd2hpdGUnJTNF4pi6JTNDL3RleHQlM0UlM0Mvc3ZnJTNFIiwic2l6ZXMiOiIxOTJ4MTkyIiwidHlwZSI6ImltYWdlL3N2Zyt4bWwifV19">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', system-ui, sans-serif; }
+        .lime-gradient { background: linear-gradient(to bottom right, #bef575, #84cc16); }
+        .route-pill { background: linear-gradient(to bottom right, #bef575, #84cc16); color: white; }
+        .card-hover { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); }
+        .eta-digit { font-size: 2.5rem; line-height: 1; font-weight: 700; }
+        .header-card { border-radius: 1.5rem; }
+    </style>
 </head>
-<body>
-<div class="max-w-md mx-auto p-6 min-h-screen">
-
-  <div class="flex justify-between items-center mb-8">
-    <div class="text-3xl font-semibold tracking-tight title-font">Where To?</div>
-  </div>
-
-  <!-- Going toggles -->
-  <div class="mb-6">
-    <div class="text-xs text-slate-500 mb-2">GOING TO</div>
-    <div class="flex gap-2">
-      <button onclick="setDestination('Home')" id="btn-home" class="flex-1 py-3 bg-emerald-600 text-white rounded-3xl text-sm font-medium">🏠 Home</button>
-      <button onclick="setDestination('Gym')" id="btn-gym" class="flex-1 py-3 bg-slate-200 rounded-3xl text-sm font-medium">🏋️ Gym</button>
-      <button onclick="setDestination('Work')" id="btn-work" class="flex-1 py-3 bg-slate-200 rounded-3xl text-sm font-medium">💼 Work</button>
-    </div>
-  </div>
-
-  <!-- From -->
-  <div class="mb-8">
-    <div class="text-xs text-slate-500 mb-2">FROM</div>
-    <div class="grid grid-cols-2 gap-3">
-      <button onclick="findMe()" class="py-3 bg-emerald-600 text-white rounded-3xl text-sm font-medium">📍 Current</button>
-      <button onclick="fromHere()" class="py-3 bg-slate-200 rounded-3xl text-sm font-medium">✍️ Enter Stop</button>
-    </div>
-  </div>
-
-  <div id="location-status" class="text-sm text-slate-500 mb-6"></div>
-
-  <div class="text-center mb-10">
-    <div id="destination-label" class="text-sm font-medium text-emerald-600">To Grand Waterfront</div>
-    <div id="best-eta" class="text-6xl font-mono font-bold text-emerald-600">—</div>
-    <div class="text-sm text-slate-500">min</div>
-  </div>
-
-  <div id="routes-list" class="space-y-4"></div>
-
-</div>
-
-<script>
-let currentDestination = "Home";
-
-function setDestination(dest) {
-  currentDestination = dest;
-  document.getElementById('destination-label').textContent = `To ${dest === 'Home' ? 'Grand Waterfront' : dest}`;
-  updateHighlights();
-  fetchRoutes();
-}
-
-function updateHighlights() {
-  document.getElementById('btn-home').classList.toggle('bg-emerald-600', currentDestination === 'Home');
-  document.getElementById('btn-home').classList.toggle('bg-slate-200', currentDestination !== 'Home');
-  document.getElementById('btn-gym').classList.toggle('bg-emerald-600', currentDestination === 'Gym');
-  document.getElementById('btn-gym').classList.toggle('bg-slate-200', currentDestination !== 'Gym');
-  document.getElementById('btn-work').classList.toggle('bg-emerald-600', currentDestination === 'Work');
-  document.getElementById('btn-work').classList.toggle('bg-slate-200', currentDestination !== 'Work');
-}
-
-function findMe() {
-  const status = document.getElementById('location-status');
-  status.textContent = "Getting current location...";
-  setTimeout(() => {
-    status.textContent = "Current location (Kowloon City)";
-    fetchRoutes();
-  }, 800);
-}
-
-function fromHere() {
-  const loc = prompt("Enter your current stop name or code:", "Kowloon City Ferry Bus Terminus");
-  if (loc) {
-    document.getElementById('location-status').textContent = `From: ${loc}`;
-    fetchRoutes();
-  }
-}
-
-async function fetchRoutes() {
-  const status = document.getElementById('location-status');
-  status.textContent = "Fetching real KMB buses...";
-
-  // Different stop IDs based on destination
-  let stopId = "15B5EC433FBAB62A"; // Kowloon City Ferry default
-
-  if (currentDestination === 'Gym') stopId = "WT697";
-  if (currentDestination === 'Work') stopId = "HH781";
-
-  try {
-    const res = await fetch(`https://data.etabus.gov.hk/v1/transport/kmb/stop-eta/${stopId}`);
-    const json = await res.json();
-    const data = json.data || [];
-
-    const routes = data.slice(0,8).map(item => ({
-      type: "Bus",
-      name: item.route,
-      eta: Math.round((new Date(item.eta) - new Date()) / 60000) || 20,
-      cost: "8-12",
-      steps: `${item.route} to ${currentDestination} area`
-    })).filter(r => r.eta > 0 && r.eta < 90);
-
-    renderRoutes(routes.length ? routes : [{ type: "Bus", name: "No buses found", eta: 25, cost: "8-12", steps: "Try different stop" }]);
-  } catch(e) {
-    renderRoutes([{ type: "Bus", name: "11X / local", eta: 28, cost: "9.5", steps: "Real data connection attempted" }]);
-  }
-}
-
-function renderRoutes(routes) {
-  const container = document.getElementById('routes-list');
-  container.innerHTML = '';
-
-  const bestEta = Math.min(...routes.map(r => r.eta));
-  document.getElementById('best-eta').textContent = bestEta;
-
-  routes.forEach(route => {
-    const card = document.createElement('div');
-    card.className = "bg-white border border-slate-200 rounded-3xl p-5 cursor-pointer active:scale-95 transition shadow-sm";
-    card.innerHTML = `
-      <div class="flex justify-between items-start">
-        <div>
-          <div class="text-xl font-semibold">${route.type}</div>
-          <div class="text-slate-500">${route.name}</div>
+<body class="bg-zinc-50 text-zinc-900 min-h-screen pb-8">
+    <div class="max-w-md mx-auto">
+        <!-- Header -->
+        <div class="bg-white border-b shadow-sm header-card mx-3 mt-3">
+            <div class="px-4 py-4 flex items-center justify-between">
+                <h1 class="text-4xl font-semibold tracking-tighter">CatchBus</h1>
+                <div onclick="manualRefresh()" class="flex items-center gap-x-1.5 text-lime-600 hover:text-lime-700 cursor-pointer active:scale-95">
+                    <i class="fa-solid fa-rotate"></i>
+                    <span class="text-xs font-medium">Refresh</span>
+                </div>
+            </div>
+            
+            <!-- From Toggles -->
+            <div class="px-4 pb-4">
+                <div class="text-xs font-medium text-zinc-500 px-1 mb-1.5">From</div>
+                <div class="flex gap-2 bg-white p-1 rounded-3xl border border-zinc-100 shadow-sm">
+                    <button onclick="switchFrom('Gym')" id="tab-Gym" class="flex-1 py-3 px-5 rounded-3xl font-semibold text-sm flex items-center justify-center gap-x-2 transition-all">🏋️ Gym</button>
+                    <button onclick="switchFrom('Work')" id="tab-Work" class="flex-1 py-3 px-5 rounded-3xl font-semibold text-sm flex items-center justify-center gap-x-2 transition-all">🏢 Work</button>
+                    <button onclick="switchFrom('Home')" id="tab-Home" class="flex-1 py-3 px-5 rounded-3xl font-semibold text-sm flex items-center justify-center gap-x-2 transition-all">🏠 Home</button>
+                </div>
+            </div>
         </div>
-        <div class="text-right">
-          <div class="text-4xl font-mono font-bold text-emerald-600">${route.eta}</div>
-          <div class="text-xs text-slate-500">min • $${route.cost}</div>
-        </div>
-      </div>
-      <button onclick="showSteps('${route.steps}')" class="mt-4 w-full py-3 bg-slate-100 hover:bg-slate-200 rounded-2xl text-sm font-medium">Show Full Steps</button>
-    `;
-    container.appendChild(card);
-  });
-}
 
-function showSteps(steps) {
-  alert("Full Steps:\n\n" + steps);
-}
+        <div id="main-content" class="px-4 pt-4 space-y-6"></div>
+    </div>
 
-fetchRoutes();
-</script>
+    <script>
+        function initTailwind() {
+            tailwind.config = { theme: { extend: { colors: { lime: { 500: '#84cc16' } } } } };
+        }
+
+        // Cleaned config (no duplicate 15)
+        const tripsConfig = [
+            // From Home - Gym on top
+            { from: "Home", to: "Gym", emoji: "🏋️", route: "11B", stopId: "F088E9BC1B13B13D", stopName: "Kowloon City Ferry Bus Terminus KC949" },
+            { from: "Home", to: "PLK LMC", emoji: "👧", route: "75X", stopId: "C72D7C053FC3AEBB", stopName: "Kowloon City Ferry Bus Terminus KC949" },
+            { from: "Home", to: "PLK LMC", emoji: "👧", route: "85", stopId: "1D0E096C4E9766C6", stopName: "Kowloon City Ferry Bus Terminus KC949" },
+            { from: "Home", to: "PLK TAY", emoji: "👦", route: "12A", stopId: "5396072459507B7F", stopName: "Grand Waterfront KC760" },
+            { from: "Home", to: "PLK TAY", emoji: "👦", route: "85X", stopId: "5396072459507B7F", stopName: "Grand Waterfront KC760" },
+            { from: "Home", to: "PLK TAY", emoji: "👦", route: "5D", stopId: "5396072459507B7F", stopName: "Grand Waterfront KC760" },
+            
+            // From Gym
+            { from: "Gym", to: "Home/Work", emoji: "🏠", route: "15", stopId: "C80FB453C9F53569", stopName: "The Latitude WT697" },
+            { from: "Gym", to: "Home/Work", emoji: "🏠", route: "85X", stopId: "C80FB453C9F53569", stopName: "The Latitude WT697" },
+            
+            // From Work
+            { from: "Work", to: "Gym", emoji: "🏋️", route: "11X", stopId: "C5888ACE3DDA6B30", stopName: "Hok Yuen Street East HH352" },
+            { from: "Work", to: "Home", emoji: "🏠", route: "115", stopId: "C5888ACE3DDA6B30", stopName: "Hok Yuen Street East HH352" },
+            { from: "Work", to: "Home", emoji: "🏠", route: "5D", stopId: "C5888ACE3DDA6B30", stopName: "Hok Yuen Street East HH352" }
+        ];
+
+        let currentFrom = "Gym";
+        let etaCache = {};
+
+        function calculateMins(etaStr) {
+            if (!etaStr) return Infinity;
+            const etaDate = new Date(etaStr);
+            const diff = (etaDate - new Date()) / 60000;
+            return diff > 0 ? Math.round(diff) : 0;
+        }
+
+        function getUrgency(mins) {
+            if (mins <= 3) return { color: "text-red-600", emoji: "🔥" };
+            if (mins <= 8) return { color: "text-amber-600", emoji: "⚡" };
+            if (mins <= 15) return { color: "text-lime-600", emoji: "👍" };
+            return { color: "text-zinc-500", emoji: "🕒" };
+        }
+
+        async function fetchStopEta(stopId) {
+            try {
+                const res = await fetch(`https://data.etabus.gov.hk/v1/transport/kmb/stop-eta/${stopId}`);
+                if (!res.ok) throw new Error("API error");
+                const data = await res.json();
+                etaCache[stopId] = data.data || [];
+            } catch (e) {}
+        }
+
+        function getTripEtas(trip) {
+            const rawEtas = etaCache[trip.stopId] || [];
+            return rawEtas
+                .filter(e => e.route && e.route.toUpperCase() === trip.route.toUpperCase())
+                .sort((a, b) => (a.eta_seq || 999) - (b.eta_seq || 999))
+                .slice(0, 3);
+        }
+
+        function createRouteCard(trip) {
+            const etas = getTripEtas(trip);
+            const firstMins = etas.length ? calculateMins(etas[0].eta) : Infinity;
+            const urgency = getUrgency(firstMins);
+
+            let html = `
+                <div class="bg-white rounded-3xl shadow-sm border border-zinc-100 overflow-hidden card-hover">
+                    <div class="px-5 pt-5 pb-4">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <div class="route-pill inline-flex items-center justify-center font-bold text-4xl tracking-tighter w-20 h-20 rounded-2xl shadow-inner">
+                                    ${trip.route}
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="eta-digit ${urgency.color}">${firstMins === Infinity ? '—' : firstMins}</div>
+                                <div class="text-xs font-medium text-zinc-500 -mt-1">min to catch</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 flex items-center gap-x-2">
+                            <span class="text-2xl">${trip.emoji}</span>
+                            <div>
+                                <div class="font-semibold">To ${trip.to}</div>
+                                <div class="text-xs text-zinc-500">${trip.stopName}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="border-t bg-zinc-50 px-5 py-3 text-sm">
+                        ${etas.length ? etas.map((eta, i) => {
+                            const mins = calculateMins(eta.eta);
+                            return `
+                                <div class="flex justify-between items-center py-1 ${i > 0 ? 'opacity-75' : ''}">
+                                    <div class="flex items-center gap-x-3">
+                                        <span class="font-mono text-xs bg-white px-2 py-0.5 rounded-full border">Next ${i+1}</span>
+                                        ${eta.rmk_en ? `<span class="text-amber-600 text-xs">${eta.rmk_en}</span>` : ''}
+                                    </div>
+                                    <div class="font-semibold ${mins < 5 ? 'text-red-600' : 'text-zinc-700'}">${mins} min</div>
+                                </div>
+                            `;
+                        }).join('') : `
+                            <div class="text-center py-3 text-zinc-400 text-sm">
+                                No upcoming ETAs right now for this route<br>
+                                <span class="text-xs">(KMB live data)</span>
+                            </div>
+                        `}
+                    </div>
+                </div>
+            `;
+            return html;
+        }
+
+        function getGroupedTrips(from) {
+            const filtered = tripsConfig.filter(t => t.from === from);
+            const groups = {};
+            filtered.forEach(t => {
+                if (!groups[t.to]) groups[t.to] = { emoji: t.emoji, trips: [] };
+                groups[t.to].trips.push(t);
+            });
+            return groups;
+        }
+
+        async function render() {
+            const main = document.getElementById("main-content");
+            main.innerHTML = `<div class="flex justify-center py-12"><div class="animate-spin w-8 h-8 border-4 border-lime-500 border-t-transparent rounded-full"></div></div>`;
+            
+            const relevantStops = new Set();
+            tripsConfig.filter(t => t.from === currentFrom).forEach(t => relevantStops.add(t.stopId));
+            
+            await Promise.all(Array.from(relevantStops).map(id => fetchStopEta(id)));
+            
+            const groups = getGroupedTrips(currentFrom);
+            
+            let html = `<div class="space-y-8">`;
+            
+            let destOrder = Object.keys(groups);
+            if (currentFrom === "Home") {
+                destOrder = ["Gym", "PLK LMC", "PLK TAY"];
+            }
+            
+            destOrder.forEach(dest => {
+                if (!groups[dest]) return;
+                const group = groups[dest];
+                html += `
+                    <div>
+                        <div class="flex items-center gap-x-3 mb-4 px-1">
+                            <div>
+                                <div class="text-xs uppercase tracking-widest text-lime-600 font-medium">To</div>
+                                <div class="text-2xl font-semibold">${dest}</div>
+                            </div>
+                            <span class="text-4xl ml-auto">${group.emoji}</span>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            ${group.trips.map(trip => createRouteCard(trip)).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += `</div>`;
+            main.innerHTML = html;
+            
+            // Active tab
+            ['Gym','Work','Home'].forEach(f => {
+                const tab = document.getElementById(`tab-${f}`);
+                if (tab) {
+                    if (f === currentFrom) {
+                        tab.classList.add('lime-gradient', 'text-white', 'shadow-md');
+                    } else {
+                        tab.classList.remove('lime-gradient', 'text-white', 'shadow-md');
+                    }
+                }
+            });
+        }
+
+        function switchFrom(from) {
+            currentFrom = from;
+            render();
+        }
+
+        async function manualRefresh() {
+            await render();
+        }
+
+        async function init() {
+            initTailwind();
+            
+            const gymTab = document.getElementById("tab-Gym");
+            if (gymTab) gymTab.classList.add('lime-gradient', 'text-white', 'shadow-md');
+            
+            await render();
+            
+            // Auto-refresh every 45 seconds
+            setInterval(() => {
+                render();
+            }, 45000);
+
+            console.log('%c✅ CatchBus PWA ready with auto-refresh (45s)', 'color:#84cc16; font-weight:600');
+        }
+
+        window.onload = init;
+    </script>
 </body>
 </html>
