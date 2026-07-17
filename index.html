@@ -7,12 +7,12 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     
-    <!-- PWA Setup -->
+    <!-- PWA -->
     <meta name="theme-color" content="#84cc16">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="CatchBus">
-    <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiQ2F0Y2hCdXMiLCJzaG9ydF9uYW1lIjoiQ2F0Y2hCdXMiLCJkZXNjcmlwdGlvbiI6IkxpdmUgS01CIEJ1cyBldGEiLCJzdGFydF91cmwiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y0ZjRmNSIsInRoZW1lX2NvbG9yIjoiIzg0Y2MxNiIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsJTNDc3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgdmlld0JveD0nMCAwIDIwMCAyMDAnJTNFJTNDcmVjdCB3aWR0aD0nMjAwJyBoZWlnaHQ9JzIwMCcgcng9JzM4JyBmaWxsPScjODRjYzE2Jy8lM0UlM0N0ZXh0IHg9JzEwMCcgeT0nMTMwJyBmb250LXNpemU9JzEwMCcgdGV4dC1hbmNob3I9J21pZGRsZScgZmlsbD0nd2hpdGUnJTNF4pi6JTNDL3RleHQlM0UlM0Mvc3ZnJTNFIiwic2l6ZXMiOiIxOTJ4MTkyIiwidHlwZSI6ImltYWdlL3N2Zyt4bWwifV19">
+    <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiQ2F0Y2hCdXMiLCJzaG9ydF9uYW1lIjoiQ2F0Y2hCdXMiLCJkZXNjcmlwdGlvbiI6IkxpdmUgS01CIGJ1cyBFVEEiLCJzdGFydF91cmwiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y0ZjRmNSIsInRoZW1lX2NvbG9yIjoiIzg0Y2MxNiIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsJTNDc3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgdmlld0JveD0nMCAwIDIwMCAyMDAnJTNFJTNDcmVjdCB3aWR0aD0nMjAwJyBoZWlnaHQ9JzIwMCcgcng9JzM4JyBmaWxsPScjODRjYzE2Jy8lM0UlM0N0ZXh0IHg9JzEwMCcgeT0nMTMwJyBmb250LXNpemU9JzEwMCcgdGV4dC1hbmNob3I9J21pZGRsZScgZmlsbD0nd2hpdGUnJTNF4pi6JTNDL3RleHQlM0UlM0Mvc3ZnJTNFIiwic2l6ZXMiOiIxOTJ4MTkyIiwidHlwZSI6ImltYWdlL3N2Zyt4bWwifV19">
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -27,7 +27,6 @@
 </head>
 <body class="bg-zinc-50 text-zinc-900 min-h-screen pb-8">
     <div class="max-w-md mx-auto">
-        <!-- Header -->
         <div class="bg-white border-b shadow-sm header-card mx-3 mt-3">
             <div class="px-4 py-4 flex items-center justify-between">
                 <h1 class="text-4xl font-semibold tracking-tighter">CatchBus</h1>
@@ -37,194 +36,8 @@
                 </div>
             </div>
             
-            <!-- From Toggles -->
             <div class="px-4 pb-4">
                 <div class="text-xs font-medium text-zinc-500 px-1 mb-1.5">From</div>
                 <div class="flex gap-2 bg-white p-1 rounded-3xl border border-zinc-100 shadow-sm">
                     <button onclick="switchFrom('Gym')" id="tab-Gym" class="flex-1 py-3 px-5 rounded-3xl font-semibold text-sm flex items-center justify-center gap-x-2 transition-all">🏋️ Gym</button>
-                    <button onclick="switchFrom('Work')" id="tab-Work" class="flex-1 py-3 px-5 rounded-3xl font-semibold text-sm flex items-center justify-center gap-x-2 transition-all">🏢 Work</button>
-                    <button onclick="switchFrom('Home')" id="tab-Home" class="flex-1 py-3 px-5 rounded-3xl font-semibold text-sm flex items-center justify-center gap-x-2 transition-all">🏠 Home</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="main-content" class="px-4 pt-4 space-y-6"></div>
-    </div>
-
-    <script>
-        function initTailwind() {
-            tailwind.config = { theme: { extend: { colors: { lime: { 500: '#84cc16' } } } } };
-        }
-
-        const tripsConfig = [
-            { from: "Home", to: "Gym", emoji: "🏋️", route: "11B", stopId: "F088E9BC1B13B13D", stopName: "Kowloon City Ferry Bus Terminus KC949" },
-            { from: "Home", to: "PLK LMC", emoji: "👧", route: "75X", stopId: "C72D7C053FC3AEBB", stopName: "Kowloon City Ferry Bus Terminus KC949" },
-            { from: "Home", to: "PLK LMC", emoji: "👧", route: "85", stopId: "1D0E096C4E9766C6", stopName: "Kowloon City Ferry Bus Terminus KC949" },
-            { from: "Home", to: "PLK TAY", emoji: "👦", route: "12A", stopId: "5396072459507B7F", stopName: "Grand Waterfront KC760" },
-            { from: "Home", to: "PLK TAY", emoji: "👦", route: "85X", stopId: "5396072459507B7F", stopName: "Grand Waterfront KC760" },
-            { from: "Home", to: "PLK TAY", emoji: "👦", route: "5D", stopId: "5396072459507B7F", stopName: "Grand Waterfront KC760" },
-            
-            { from: "Gym", to: "Home/Work", emoji: "🏠", route: "15", stopId: "C80FB453C9F53569", stopName: "The Latitude WT697" },
-            { from: "Gym", to: "Home/Work", emoji: "🏠", route: "85X", stopId: "C80FB453C9F53569", stopName: "The Latitude WT697" },
-            
-            { from: "Work", to: "Gym", emoji: "🏋️", route: "11X", stopId: "C5888ACE3DDA6B30", stopName: "Hok Yuen Street East HH352" },
-            { from: "Work", to: "Home", emoji: "🏠", route: "115", stopId: "C5888ACE3DDA6B30", stopName: "Hok Yuen Street East HH352" },
-            { from: "Work", to: "Home", emoji: "🏠", route: "5D", stopId: "C5888ACE3DDA6B30", stopName: "Hok Yuen Street East HH352" }
-        ];
-
-        let currentFrom = "Gym";
-        let etaCache = {};
-
-        function calculateMins(etaStr) {
-            if (!etaStr) return Infinity;
-            const diff = (new Date(etaStr) - new Date()) / 60000;
-            return diff > 0 ? Math.round(diff) : 0;
-        }
-
-        function getUrgency(mins) {
-            if (mins <= 3) return { color: "text-red-600", emoji: "🔥" };
-            if (mins <= 8) return { color: "text-amber-600", emoji: "⚡" };
-            if (mins <= 15) return { color: "text-lime-600", emoji: "👍" };
-            return { color: "text-zinc-500", emoji: "🕒" };
-        }
-
-        async function fetchStopEta(stopId) {
-            try {
-                const res = await fetch(`https://data.etabus.gov.hk/v1/transport/kmb/stop-eta/${stopId}`);
-                const data = await res.json();
-                etaCache[stopId] = data.data || [];
-            } catch (e) {}
-        }
-
-        function getTripEtas(trip) {
-            return (etaCache[trip.stopId] || [])
-                .filter(e => e.route && e.route.toUpperCase() === trip.route.toUpperCase())
-                .sort((a, b) => (a.eta_seq || 999) - (b.eta_seq || 999))
-                .slice(0, 3);
-        }
-
-        function createRouteCard(trip) {
-            const etas = getTripEtas(trip);
-            const firstMins = etas.length ? calculateMins(etas[0].eta) : Infinity;
-            const urgency = getUrgency(firstMins);
-
-            return `
-                <div class="bg-white rounded-3xl shadow-sm border border-zinc-100 overflow-hidden card-hover">
-                    <div class="px-5 pt-5 pb-4">
-                        <div class="flex items-start justify-between">
-                            <div>
-                                <div class="route-pill inline-flex items-center justify-center font-bold text-4xl tracking-tighter w-20 h-20 rounded-2xl shadow-inner">
-                                    ${trip.route}
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <div class="eta-digit ${urgency.color}">${firstMins === Infinity ? '—' : firstMins}</div>
-                                <div class="text-xs font-medium text-zinc-500 -mt-1">min to catch</div>
-                            </div>
-                        </div>
-                        <div class="mt-4 flex items-center gap-x-2">
-                            <span class="text-2xl">${trip.emoji}</span>
-                            <div>
-                                <div class="font-semibold">To ${trip.to}</div>
-                                <div class="text-xs text-zinc-500">${trip.stopName}</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="border-t bg-zinc-50 px-5 py-3 text-sm">
-                        ${etas.length ? etas.map((eta, i) => {
-                            const mins = calculateMins(eta.eta);
-                            return `
-                                <div class="flex justify-between items-center py-1 ${i > 0 ? 'opacity-75' : ''}">
-                                    <div class="flex items-center gap-x-3">
-                                        <span class="font-mono text-xs bg-white px-2 py-0.5 rounded-full border">Next ${i+1}</span>
-                                        ${eta.rmk_en ? `<span class="text-amber-600 text-xs">${eta.rmk_en}</span>` : ''}
-                                    </div>
-                                    <div class="font-semibold ${mins < 5 ? 'text-red-600' : 'text-zinc-700'}">${mins} min</div>
-                                </div>
-                            `;
-                        }).join('') : `
-                            <div class="text-center py-3 text-zinc-400 text-sm">
-                                No upcoming ETAs<br><span class="text-xs">(KMB live data)</span>
-                            </div>
-                        `}
-                    </div>
-                </div>
-            `;
-        }
-
-        function getGroupedTrips(from) {
-            const filtered = tripsConfig.filter(t => t.from === from);
-            const groups = {};
-            filtered.forEach(t => {
-                if (!groups[t.to]) groups[t.to] = { emoji: t.emoji, trips: [] };
-                groups[t.to].trips.push(t);
-            });
-            return groups;
-        }
-
-        async function render() {
-            const main = document.getElementById("main-content");
-            main.innerHTML = `<div class="flex justify-center py-12"><div class="animate-spin w-8 h-8 border-4 border-lime-500 border-t-transparent rounded-full"></div></div>`;
-
-            const relevantStops = new Set(tripsConfig.filter(t => t.from === currentFrom).map(t => t.stopId));
-            await Promise.all([...relevantStops].map(fetchStopEta));
-
-            const groups = getGroupedTrips(currentFrom);
-            let html = `<div class="space-y-8">`;
-
-            let destOrder = Object.keys(groups);
-            if (currentFrom === "Home") destOrder = ["Gym", "PLK LMC", "PLK TAY"];
-
-            destOrder.forEach(dest => {
-                if (!groups[dest]) return;
-                const group = groups[dest];
-                html += `
-                    <div>
-                        <div class="flex items-center gap-x-3 mb-4 px-1">
-                            <div>
-                                <div class="text-xs uppercase tracking-widest text-lime-600 font-medium">To</div>
-                                <div class="text-2xl font-semibold">${dest}</div>
-                            </div>
-                            <span class="text-4xl ml-auto">${group.emoji}</span>
-                        </div>
-                        <div class="space-y-4">
-                            ${group.trips.map(trip => createRouteCard(trip)).join('')}
-                        </div>
-                    </div>
-                `;
-            });
-
-            html += `</div>`;
-            main.innerHTML = html;
-
-            // Update active tab
-            ['Gym','Work','Home'].forEach(f => {
-                const tab = document.getElementById(`tab-${f}`);
-                if (tab) tab.classList.toggle('lime-gradient text-white shadow-md', f === currentFrom);
-            });
-        }
-
-        function switchFrom(from) {
-            currentFrom = from;
-            render();
-        }
-
-        async function manualRefresh() {
-            await render();
-        }
-
-        function init() {
-            initTailwind();
-            document.getElementById("tab-Gym").classList.add('lime-gradient', 'text-white', 'shadow-md');
-            render();
-
-            // Auto refresh every 45 seconds
-            setInterval(render, 45000);
-
-            console.log('%c✅ CatchBus ready • Auto-refresh 45s • Nice icon added', 'color:#84cc16; font-weight:600');
-        }
-
-        window.onload = init;
-    </script>
-</body>
-</html>
+                    <button onclick="switchFrom('Work')" id="tab-Work" class="flex-1 py-3 px-5 rounded-3xl font-semibold text-sm flex items-center justify-center gap-x-2
